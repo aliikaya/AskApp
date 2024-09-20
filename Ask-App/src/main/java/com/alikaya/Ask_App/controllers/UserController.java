@@ -1,7 +1,6 @@
 package com.alikaya.Ask_App.controllers;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,50 +12,42 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alikaya.Ask_App.entities.User;
-import com.alikaya.Ask_App.repos.UserRepository;
+import com.alikaya.Ask_App.services.UserService;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    private UserRepository userRepository;
+    private UserService userService;
 
-    public UserController(UserRepository userRepository){
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
     @GetMapping
-    public List<User> getAllUsers(){
-       return userRepository.findAll();
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
     @PostMapping
-    public User createUser(@RequestBody User newUser){
-        return userRepository.save(newUser);
+    public User createUser(@RequestBody User newUser) {
+        return userService.saveOneUser(newUser);
     }
 
     @GetMapping("/{userId}")
-    public User getOneUser(@PathVariable Long userId){
+    public User getOneUser(@PathVariable Long userId) {
         // custom exception ekle
-       return userRepository.findById(userId).orElse(null);
+        return userService.getOneUser(userId);
     }
 
     @PutMapping("/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User newUser){
-        Optional<User> user = userRepository.findById(userId);
-        if(user.isPresent()){
-            User foundUser = user.get();
-            foundUser.setUsername(newUser.getUsername());
-            foundUser.setPassword(newUser.getPassword());
-            userRepository.save(foundUser);
-            return foundUser;
-        }else
-        return null;
+    public User updateUser(@PathVariable Long userId, @RequestBody User newUser) {
+        return userService.updateOneUser(userId, newUser);
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteOneUser(@PathVariable Long userId){
-        userRepository.deleteById(userId);
+    public void deleteOneUser(@PathVariable Long userId) {
+        userService.deleteOneUser(userId);
     }
 
 }
