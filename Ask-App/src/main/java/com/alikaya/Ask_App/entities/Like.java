@@ -6,15 +6,13 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "users")
+@Table(name = "likes")
 @Data
-public class User {
+public class Like {
 
     @Id
     Long id;
+    Long postId;
+    Long userId;
 
-    String username;
-    String name;
-
-    
 }
