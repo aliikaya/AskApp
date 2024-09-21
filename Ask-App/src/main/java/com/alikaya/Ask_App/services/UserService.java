@@ -12,7 +12,7 @@ import com.alikaya.Ask_App.repos.UserRepository;
 @Service
 public class UserService {
 
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -45,5 +45,7 @@ public class UserService {
     public void deleteOneUser(Long userId) {
         userRepository.deleteById(userId);
     }
+
+    
 
 }
