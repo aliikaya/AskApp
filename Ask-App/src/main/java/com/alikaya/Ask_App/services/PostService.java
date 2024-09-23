@@ -31,7 +31,7 @@ public class PostService {
     }
 
     public Post createOnePost(PostCreateRequest newPostRequest) {
-        User user = userService.getOneUser(newPostRequest.getUserId());
+        User user = userService.getOneUserById(newPostRequest.getUserId());
         if(user == null){
             return null;
         }else{
@@ -54,8 +54,8 @@ public class PostService {
             Post toUpdate = post.get();
             toUpdate.setText(updatePost.getText());
             toUpdate.setTitle(updatePost.getTitle());
-            postRepository.save(toUpdate);
-            return toUpdate;
+            return postRepository.save(toUpdate);
+            
         }
         return null;
     }
