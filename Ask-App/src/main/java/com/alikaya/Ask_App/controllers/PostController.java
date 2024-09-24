@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alikaya.Ask_App.entities.Post;
 import com.alikaya.Ask_App.request.PostCreateRequest;
 import com.alikaya.Ask_App.request.PostUpdateRequest;
+import com.alikaya.Ask_App.responses.PostResponse;
 import com.alikaya.Ask_App.services.PostService;
 
 @RestController
@@ -30,7 +31,7 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> getAllPosts(@RequestParam Optional<Long> userId){
+    public List<PostResponse> getAllPosts(@RequestParam Optional<Long> userId){
         return postService.getAllPosts(userId);
     }
 
