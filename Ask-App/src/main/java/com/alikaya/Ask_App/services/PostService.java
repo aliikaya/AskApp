@@ -2,16 +2,16 @@ package com.alikaya.Ask_App.services;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import com.alikaya.Ask_App.entities.Post;
 import com.alikaya.Ask_App.entities.User;
 import com.alikaya.Ask_App.repos.PostRepository;
 import com.alikaya.Ask_App.request.PostCreateRequest;
 import com.alikaya.Ask_App.request.PostUpdateRequest;
+import com.alikaya.Ask_App.responses.PostResponse;
 
 @Service
 public class PostService {
@@ -23,12 +23,16 @@ public class PostService {
         this.userService = userService;
     }
 
-    public List<Post> getAllPosts(@RequestBody Optional<Long> userId) {
+    public List<PostResponse> getAllPosts(Optional<Long> userId) {
+        List<Post> list;
         if(userId.isPresent()){
-            return postRepository.findByUserId(userId.get());
-        }else
-            return postRepository.findAll();
+            list = postRepository.findByUserId(userId.get());
+        }else{
+            list = postRepository.findAll();
+        }
+        return list.stream().map(p -> new PostResponse(p)).collect(Collectors.toList());
     }
+    
 
     public Post createOnePost(PostCreateRequest newPostRequest) {
         User user = userService.getOneUserById(newPostRequest.getUserId());
