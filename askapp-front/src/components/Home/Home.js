@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Post from "../Post/Post";
-import { Container } from "@mui/material";
+import { Box } from "@mui/material"; // Box bileşenini ekliyoruz.
+import PostForm from "../Post/PostForm";
 
 function Home() {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [postList, setPostList] = useState([]);
-  
- 
 
-  useEffect(() => {
+  const refreshPost = () => {
     fetch("/posts")
-      .then(res => res.json())
+      .then((res) => res.json())
       .then(
         (result) => {
           setIsLoaded(true);
@@ -22,6 +21,10 @@ function Home() {
           setError(error);
         }
       );
+  }
+
+  useEffect(() => {
+    refreshPost()
   }, []);
 
   if (error) {
@@ -30,24 +33,32 @@ function Home() {
     return <div>Loading...</div>;
   } else {
     return (
-        <Container fixed 
-        maxWidth="lg" 
+      <Box
         sx={{
           display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'space-around', // postların daha iyi yerleşmesi için 
-          alignItems: 'flex-start', // postlar yukarıdan başlasın
-          bgcolor: '#cfe8fc',
-          minHeight: '100vh', // container sayfanın tamamını kaplasın
+          flexDirection: 'column', // Postları dikey yerleştir
+          alignItems: 'center', // Ortalamak için
+          justifyContent: 'flex-start', // Yukarıdan başlatmak için
+          bgcolor: '#F1F1F1',
+          minHeight: '100vh', // Minimum yükseklik, tüm ekranı kaplasın
           padding: 2
-        }}>
-              {postList.map(post => (
-                <Post userId = {post.userId} userName = {post.userName} title={post.title} text={post.text}  />
-              ))}
-            
-          
-        </Container>
-      
+           
+        }}
+      >
+        <PostForm userId={1}
+            userName={"sdf"}
+            refreshPost = {refreshPost}
+            />
+        {postList.map((post) => (
+          <Post
+            postId = {post.id}
+            userId={post.userId}
+            userName={post.userName}
+            title={post.title}
+            text={post.text}
+          />
+        ))}
+      </Box>
     );
   }
 }
