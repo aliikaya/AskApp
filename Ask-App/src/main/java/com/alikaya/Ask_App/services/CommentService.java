@@ -47,9 +47,9 @@ public class CommentService {
         if(user != null && post != null){
             Comment commentToSave = new Comment();
             commentToSave.setId(newCommentRequest.getId());
-            commentToSave.setText(newCommentRequest.getText());
             commentToSave.setPost(post);
             commentToSave.setUser(user);
+            commentToSave.setText(newCommentRequest.getText());
             return commentRepository.save(commentToSave);
         }else 
             return null;
