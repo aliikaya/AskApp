@@ -9,7 +9,7 @@ function Navbar() {
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ backgroundColor: '#1B7F79' }}>
+        <AppBar position="static" sx={{ backgroundColor: '#A4B3B0' }}>
           <Toolbar>
             {/* Sol kısım: Home ve MenuIcon */}
             <IconButton
