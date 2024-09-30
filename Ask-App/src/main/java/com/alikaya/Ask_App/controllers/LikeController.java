@@ -15,6 +15,7 @@ import java.util.Optional;
 
 import com.alikaya.Ask_App.entities.Like;
 import com.alikaya.Ask_App.request.LikeCreateRequest;
+import com.alikaya.Ask_App.responses.LikeResponse;
 import com.alikaya.Ask_App.services.LikeService;
 
 @RestController
@@ -28,7 +29,7 @@ public class LikeController {
     }
 
     @GetMapping
-    public List<Like> getAllLikes(@RequestParam Optional<Long> userId, @RequestParam Optional<Long> postId){
+    public List<LikeResponse> getAllLikes(@RequestParam Optional<Long> userId, @RequestParam Optional<Long> postId){
         return likeService.getAllLikesWithParam(userId, postId);
     }
 
