@@ -13,6 +13,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import { Link } from "react-router-dom";
 import { Container } from "@mui/material";
 import Comment from "../Comment/Comment";
+import CommentForm from "../Comment/CommentForm";
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -29,13 +30,15 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 function Post(props) {
-  const { title, text, userId, userName, postId } = props;
+  const { title, text, userId, userName, postId, likes } = props;
   const [expanded, setExpanded] = useState(false);
-  const [liked, setLiked] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
   const [commentList, setCommentList] = useState([]);
   const [error, setError] = useState(null);
   const isInitialMount = useRef(true);
+  const [isLiked, setIsLiked] = useState(false);
+  const [ likeCount, setLikeCount ]= useState(likes.length)
+  const [likeId, setLikedId] = useState(null);
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
@@ -43,7 +46,16 @@ function Post(props) {
     console.log(commentList);
   };
   const handleLike = () => {
-    setLiked(!liked);
+    setIsLiked(!isLiked);
+    if(!isLiked){
+      savLike();
+      setLikeCount(likeCount + 1)
+    }
+    else{
+      deleteLike();
+      setLikeCount(likeCount - 1)
+    }
+
   };
 
   const refreshComments = () => {
@@ -61,10 +73,46 @@ function Post(props) {
       );
   };
 
+  const savLike = () => {
+    fetch("/likes" , {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body : JSON.stringify({
+            postId: postId,
+            userId: userId,
+        }),
+    })
+    .then((res) => res.json())
+    .catch((err) => console.log(err))
+}
+
+
+const deleteLike = () => {
+  fetch("/likes/" +likeId, {
+    method:"DELETE",
+  })
+  .catch((err) => console.log(err))
+}
+
+
+  const checkLikes = () => {
+    var likeControl = likes.find((like => like.userId === userId))
+    if(likeControl != null){
+      setLikedId(likeControl.id)
+      setIsLiked(true);
+    }
+  }
+
   useEffect(() => {
     if (isInitialMount.current) isInitialMount.current = false;
     else refreshComments();
   }, []);
+
+  useEffect(() => {checkLikes()},[])
+
+
 
   return (
     <div className="postContainer">
@@ -99,8 +147,9 @@ function Post(props) {
         </CardContent>
         <CardActions disableSpacing>
           <IconButton aria-label="add to favorites" onClick={handleLike}>
-            <GradeIcon style={liked ? { color: "#FF4858" } : null} />
+            <GradeIcon style={isLiked ? { color: "#FF4858" } : null} />
           </IconButton>
+          {likeCount}
 
           <ExpandMore
             expand={expanded}
@@ -113,12 +162,18 @@ function Post(props) {
         </CardActions>
         <Collapse in={expanded} timeout="auto" unmountOnExit>
           <Container fixed>
-            {error? "error"
+            {error
+              ? "error"
               : isLoaded
               ? commentList.map((comment) => (
                   <Comment userId={1} userName={"USER"} text={comment.text} />
                 ))
               : "loading"}
+            <CommentForm
+              userId={1}
+              userName={"USER"}
+              postId={postId}
+            ></CommentForm>
           </Container>
         </Collapse>
       </Card>
