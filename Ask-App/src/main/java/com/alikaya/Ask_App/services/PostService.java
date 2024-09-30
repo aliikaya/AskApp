@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alikaya.Ask_App.entities.Post;
@@ -11,16 +12,24 @@ import com.alikaya.Ask_App.entities.User;
 import com.alikaya.Ask_App.repos.PostRepository;
 import com.alikaya.Ask_App.request.PostCreateRequest;
 import com.alikaya.Ask_App.request.PostUpdateRequest;
+import com.alikaya.Ask_App.responses.LikeResponse;
 import com.alikaya.Ask_App.responses.PostResponse;
+
 
 @Service
 public class PostService {
     private PostRepository postRepository;
     private UserService userService;
+    private LikeService likeService;
 
     public PostService(PostRepository postRepository,  UserService userService){
         this.postRepository = postRepository;
         this.userService = userService;
+      
+    }
+    @Autowired
+    public void setLikeService(LikeService likeService){
+        this.likeService = likeService;
     }
 
     public List<PostResponse> getAllPosts(Optional<Long> userId) {
@@ -30,7 +39,10 @@ public class PostService {
         }else{
             list = postRepository.findAll();
         }
-        return list.stream().map(p -> new PostResponse(p)).collect(Collectors.toList());
+        return list.stream().map(p -> {
+           List<LikeResponse> likes = likeService.getAllLikesWithParam(Optional.ofNullable(null), Optional.of(p.getId()));
+            
+            return new PostResponse(p, likes);}).collect(Collectors.toList());
     }
     
 
